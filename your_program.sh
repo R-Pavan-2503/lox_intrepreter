@@ -8,18 +8,20 @@
 
 set -e # Exit early if any commands fail
 
-# Copied from .codecrafters/compile.sh
-#
-# - Edit this to change how your program compiles locally
-# - Edit .codecrafters/compile.sh to change how your program compiles remotely
+# Modified compile steps for MinGW environment
 (
   cd "$(dirname "$0")" # Ensure compile steps are run within the repository directory
-  cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
-  cmake --build ./build
+  
+  # Set compiler environment variables
+  export CC=gcc
+  export CXX=g++
+  
+  # Use MinGW Makefiles generator and remove vcpkg dependency
+  cmake -B build -S . -G "MinGW Makefiles"
+  
+  # Build using mingw32-make
+  cd build && mingw32-make
 )
 
-# Copied from .codecrafters/run.sh
-#
-# - Edit this to change how your program runs locally
-# - Edit .codecrafters/run.sh to change how your program runs remotely
+# Run the program
 exec $(dirname $0)/build/interpreter "$@"
